@@ -17,11 +17,11 @@ import pandas as pd
 from pathlib import Path
 
 INDICATOR_TITLE_NAMES = {
-    'Y': 'Y',
+    'Y': 'Yield',
     'ET': 'ET',
     'WUE': 'WUE',
-    'CH4': 'CH4',
-    'N2O': 'N2O',
+    'CH4': 'CH₄',
+    'N2O': 'N₂O',
     'GWP': 'GWP'
 }
 
@@ -324,7 +324,8 @@ def generate_all_ratio_maps(comparison_results, output_dir, reference_tif_path,
             colorbar_name='Ratio',
             output_path=str(maps_dir / f'{indicator}_ratio.png'),
             vmin=vmin_ratio, vmax=vmax_ratio, cmap='RdYlGn',
-            shapefile_path=shapefile_path
+            shapefile_path=shapefile_path,
+            global_mean_as_percentage=True
         )
 
         ratio_maps[indicator] = {

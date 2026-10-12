@@ -159,7 +159,7 @@ GWP_N2O_FACTOR = 273  # N2O -> CO2-eq
 
 VISUALIZATION_PARAMS = {
     'rice': {
-        'optimal_ratio': {'vmin': 0.60, 'vmax': 0.90, 'cmap': 'RdYlGn'},
+        'optimal_ratio': {'vmin': 0.70, 'vmax': 0.90, 'cmap': 'RdYlGn'},
         'Y': {'vmin': 0, 'vmax': 12000, 'cmap': 'YlOrRd'},
         'ET': {'vmin': 600, 'vmax': 1500, 'cmap': 'Blues'},
         'WUE': {'vmin': 0, 'vmax': 25, 'cmap': 'Greens'},
@@ -168,7 +168,7 @@ VISUALIZATION_PARAMS = {
         'GWP': {'vmin': 0, 'vmax': 15000, 'cmap': 'Reds'}
     },
     'wheat': {
-        'optimal_ratio': {'vmin': 0.60, 'vmax': 0.90, 'cmap': 'RdYlGn'},
+        'optimal_ratio': {'vmin': 0.70, 'vmax': 0.90, 'cmap': 'RdYlGn'},
         'Y': {'vmin': 0, 'vmax': 12000, 'cmap': 'YlOrRd'},
         'ET': {'vmin': 200, 'vmax': 600, 'cmap': 'Blues'},
         'WUE': {'vmin': 0, 'vmax': 25, 'cmap': 'Greens'},
@@ -177,7 +177,7 @@ VISUALIZATION_PARAMS = {
         'GWP': {'vmin': 0, 'vmax': 1500, 'cmap': 'Reds'}
     },
     'maize': {
-        'optimal_ratio': {'vmin': 0.60, 'vmax': 0.90, 'cmap': 'RdYlGn'},
+        'optimal_ratio': {'vmin': 0.70, 'vmax': 0.90, 'cmap': 'RdYlGn'},
         'Y': {'vmin': 0, 'vmax': 18000, 'cmap': 'YlOrRd'},
         'ET': {'vmin': 200, 'vmax': 800, 'cmap': 'Blues'},
         'WUE': {'vmin': 0, 'vmax': 25, 'cmap': 'Greens'},

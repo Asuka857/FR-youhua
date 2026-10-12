@@ -83,7 +83,7 @@ def assign_continent_dynamic(df, geo_cache=None):
 
 
 def prepare_ratio_heatmap_data(
-    crops=['rice', 'wheat', 'maize'],
+    crops=['maize', 'wheat', 'rice'],
     outday='20251028',
     indicators=['Y', 'ET', 'WUE', 'CH4', 'N2O', 'GWP']
 ):
@@ -97,7 +97,7 @@ def prepare_ratio_heatmap_data(
 
     返回:
         data_dict: {crop: DataFrame} 字典
-        每个DataFrame: 行=六大洲, 列=六大指标, 值=optimal_ck_ratio平均值
+        每个DataFrame: 行=Global和六大洲, 列=六大指标, 值=optimal_ck_ratio平均值
     """
     data_dict = {}
     geo_cache = {}  # 地理编码缓存（跨作物共享）
@@ -155,11 +155,14 @@ def prepare_ratio_heatmap_data(
             count = continent_counts.get(continent, 0)
             print(f"    {continent}: {count:,} 网格")
 
-        # 构建矩阵：按大洲和指标分组
+        # 构建矩阵：全局均值 + 按大洲和指标分组
         heatmap_data = merged_df.groupby(['continent', 'indicator'])['optimal_ck_ratio'].mean().unstack()
+        global_row = merged_df.groupby('indicator')['optimal_ck_ratio'].mean().to_frame().T
+        global_row.index = ['Global']
 
-        # 确保六大洲和六大指标都有
-        continents = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America']
+        # 确保Global、六大洲和六大指标都有
+        continents = ['Global', 'Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America']
+        heatmap_data = pd.concat([global_row, heatmap_data], axis=0)
         heatmap_data = heatmap_data.reindex(index=continents, columns=indicators)
 
         data_dict[crop] = heatmap_data
@@ -197,17 +200,17 @@ def merge_crop_data(data_dict, indicators=['Y', 'ET', 'WUE', 'CH4', 'N2O', 'GWP'
         indicators: 指标列表
 
     返回:
-        merged_df: 合并后的DataFrame (6大洲 × 18列[作物_指标])
+        merged_df: 合并后的DataFrame (Global+6大洲 × 18列[作物_指标])
         col_labels: 列标签列表（用于x轴显示）
     """
-    continents = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America']
+    continents = ['Global', 'Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America']
 
     # 获取第一个作物的DataFrame作为基准索引
     first_crop = list(data_dict.keys())[0]
     merged_df = pd.DataFrame(index=continents)
     col_labels = []
 
-    for crop in ['rice', 'wheat', 'maize']:
+    for crop in ['maize', 'wheat', 'rice']:
         if crop not in data_dict:
             continue
         df = data_dict[crop]
@@ -252,7 +255,7 @@ def plot_ratio_heatmap(
     # 设置Nature期刊风格
     sns.set_style("white")
     plt.rcParams['font.family'] = 'Times New Roman'
-    plt.rcParams['font.size'] = 11
+    plt.rcParams['font.size'] = 15
     plt.rcParams['axes.unicode_minus'] = False
 
     # 合并三种作物数据
@@ -278,24 +281,23 @@ def plot_ratio_heatmap(
         linewidths=0.5,
         linecolor='white',
         cbar_kws={
-            'label': 'Optimal/CK Ratio',
             'shrink': 0.8,
             'aspect': 30
         },
         annot_kws={
-            'size': 9,
+            'size': 13,
             'weight': 'normal'
         }
     )
 
     # 设置Y轴标签（大洲名称）
-    ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=12, weight='bold')
-    ax.set_ylabel('Continents', fontsize=13, weight='bold', labelpad=10)
+    ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=16, weight='bold')
+    ax.set_ylabel('')
 
     # 设置X轴标签（指标名称）
     n_indicators = len(col_labels) // 3  # 每个作物的指标数
-    ax.set_xticklabels(col_labels, rotation=45, ha='right', fontsize=10)
-    ax.set_xlabel('Indicators', fontsize=13, weight='bold', labelpad=10)
+    ax.set_xticklabels(col_labels, rotation=45, ha='right', fontsize=14, weight='bold')
+    ax.set_xlabel('')
 
     # 添加作物分组标签（在X轴上方）
     ax2 = ax.twiny()
@@ -307,7 +309,7 @@ def plot_ratio_heatmap(
     crop_positions = [n_ind/2 + i * n_ind for i in range(3)]
 
     ax2.set_xticks(crop_positions)
-    ax2.set_xticklabels(['Rice', 'Wheat', 'Maize'], fontsize=14, weight='bold')
+    ax2.set_xticklabels(['Maize', 'Wheat', 'Rice'], fontsize=18, weight='bold')
     ax2.tick_params(length=0, pad=5)
     # 移除Crops标签（保留分组标签）
 
@@ -321,8 +323,8 @@ def plot_ratio_heatmap(
 
     # 调整颜色条样式
     cbar = heatmap.collections[0].colorbar
-    cbar.ax.set_ylabel('Optimal/CK Ratio', fontsize=12, weight='bold')
-    cbar.ax.tick_params(labelsize=10)
+    cbar.ax.set_ylabel('')
+    cbar.ax.tick_params(labelsize=14)
 
     # 移除主标题，为拼图预留空间
 
@@ -339,7 +341,7 @@ def plot_ratio_heatmap(
 
 
 def generate_ratio_heatmaps(
-    crops=['rice', 'wheat', 'maize'],
+    crops=['maize', 'wheat', 'rice'],
     outday='20251028',
     output_dir=None
 ):

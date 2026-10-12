@@ -493,7 +493,10 @@ def generate_spatial_map(data_df, indicator, crop, outday, output_dir):
 
         map_dir = f'{output_dir}/maps'
         os.makedirs(map_dir, exist_ok=True)
-        map_file = f'{map_dir}/{indicator}_map.png'
+        map_name = f'{indicator}_map'
+        if indicator == 'optimal_ratio':
+            map_name = f'{map_name}_{vmin:.1f}-{vmax:.1f}'
+        map_file = f'{map_dir}/{map_name}.png'
 
         # 调用map函数
         # tif_file 是包含tif文件的目录路径，tif_name 是tif文件名（不含.tif）
@@ -506,7 +509,7 @@ def generate_spatial_map(data_df, indicator, crop, outday, output_dir):
             vmax=vmax,
             title=title,
             colorbar_name=colorbar_name,
-            save_file=f'{indicator}_map',
+            save_file=map_name,
             outday=outday,
             saveday=outday,
             NW='W/spatial_analysis',

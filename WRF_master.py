@@ -519,24 +519,24 @@ TASK_LIST = [
     # ========== 任务示例 ==========
 
     #示例1：Rice - 完整流程
-    {
-        'crop': 'maize',
-        'mode': 'full',
-        'lowdata': 0.60,        # 响应面范围
-        'updata': 0.86,
-        'opt_lowdata': 0.60,    # 优化范围
-        'opt_updata': 0.85,
-        'force_rebuild': True,  # 强制重新构建响应面
-    },
     # {
-    #     'crop': 'wheat',
+    #     'crop': 'maize',
     #     'mode': 'full',
-    #     'lowdata': 0.75,  # 响应面范围
-    #     'updata': 0.90,
-    #     'opt_lowdata': 0.75,  # 优化范围
-    #     'opt_updata': 0.90,
+    #     'lowdata': 0.60,        # 响应面范围
+    #     'updata': 0.86,
+    #     'opt_lowdata': 0.60,    # 优化范围
+    #     'opt_updata': 0.85,
     #     'force_rebuild': True,  # 强制重新构建响应面
     # },
+    {
+        'crop': 'rice',
+        'mode': 'full',
+        'lowdata': 0.75,  # 响应面范围
+        'updata': 0.90,
+        'opt_lowdata': 0.75,  # 优化范围
+        'opt_updata': 0.90,
+        'force_rebuild': True,  # 强制重新构建响应面
+    },
     # ========== 添加更多任务 ==========
     # 复制上面的模板，修改参数即可
 ]

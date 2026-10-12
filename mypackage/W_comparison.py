@@ -32,9 +32,9 @@ INDICATOR_INFO = {
     'Y': {'name': 'Yield', 'unit': 'kg/ha'},
     'ET': {'name': 'Evapotranspiration', 'unit': 'mm'},
     'WUE': {'name': 'Water Use Efficiency', 'unit': 'kg/m3'},
-    'CH4': {'name': 'CH4 Emission', 'unit': 'kg/ha'},
-    'N2O': {'name': 'N2O Emission', 'unit': 'kg/ha'},
-    'GWP': {'name': 'Global Warming Potential', 'unit': 'kg CO2-eq/ha'}
+    'CH4': {'name': 'CH₄ Emission', 'unit': 'kg/ha'},
+    'N2O': {'name': 'N₂O Emission', 'unit': 'kg/ha'},
+    'GWP': {'name': 'Global Warming Potential', 'unit': r'kg CO$_2$-eq/ha'}
 }
 
 
@@ -447,9 +447,14 @@ def _generate_simple_comparison_map(comparison_data, indicator, output_dir):
         vmin=vmin,
         vmax=vmax
     )
-    axes[0].set_title(f'{indicator} - Optimal')
+    title_name = INDICATOR_INFO.get(indicator, {}).get('name', indicator)
+    if indicator == 'Y':
+        title_name = 'Yield'
+
+    axes[0].set_title(title_name, fontsize=26)
     axes[0].set_aspect(x_range / y_range)
-    plt.colorbar(sc1, ax=axes[0], shrink=0.8)
+    cbar1 = plt.colorbar(sc1, ax=axes[0], shrink=0.8)
+    cbar1.ax.tick_params(labelsize=16)
 
     # 对照组
     sc2 = axes[1].scatter(
@@ -461,9 +466,10 @@ def _generate_simple_comparison_map(comparison_data, indicator, output_dir):
         vmin=vmin,
         vmax=vmax
     )
-    axes[1].set_title(f'{indicator} - Control')
+    axes[1].set_title(title_name, fontsize=26)
     axes[1].set_aspect(x_range / y_range)
-    plt.colorbar(sc2, ax=axes[1], shrink=0.8)
+    cbar2 = plt.colorbar(sc2, ax=axes[1], shrink=0.8)
+    cbar2.ax.tick_params(labelsize=16)
 
     # 变化
     vmax_change = max(abs(comparison_data['change'].min()), abs(comparison_data['change'].max()))
@@ -476,9 +482,10 @@ def _generate_simple_comparison_map(comparison_data, indicator, output_dir):
         vmin=-vmax_change,
         vmax=vmax_change
     )
-    axes[2].set_title(f'{indicator} - Change')
+    axes[2].set_title(title_name, fontsize=26)
     axes[2].set_aspect(x_range / y_range)
-    plt.colorbar(sc3, ax=axes[2], shrink=0.8)
+    cbar3 = plt.colorbar(sc3, ax=axes[2], shrink=0.8)
+    cbar3.ax.tick_params(labelsize=16)
 
     plt.tight_layout()
 

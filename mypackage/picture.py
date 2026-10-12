@@ -127,7 +127,7 @@ def map(tif_file, tif_name,crop, vmin, vmax, title, colorbar_name, save_file,out
         direction='out',    # 刻度线向外
         length=1.7,         # 刻度线的长度
         width=0.8,          # 刻度线的宽度
-        labelsize=12,        # 刻度字体大小
+        labelsize=16,        # 刻度字体大小
         labeltop=True,      # 显示刻度标签在顶部
         labelbottom=False,  # 隐藏底部的刻度标签
         top=True,           # 在颜色条顶部显示刻度
@@ -155,7 +155,7 @@ def map(tif_file, tif_name,crop, vmin, vmax, title, colorbar_name, save_file,out
     cbar.ax.text(
         0, 2,  # 设置相对位置
         f'{colorbar_name}', 
-        fontsize=15,
+        fontsize=19,
         transform=cbar.ax.transAxes,  # 使用颜色条的相对坐标
         va='bottom',                 # 垂直对齐方式
         ha='left',                   # 水平对齐方式
@@ -167,7 +167,7 @@ def map(tif_file, tif_name,crop, vmin, vmax, title, colorbar_name, save_file,out
         spine.set_linewidth(1.5)  # 设置图形边框的粗细
 
     # 7. 添加标题
-    ax.set_title(title, fontsize=18, fontname='Times New Roman')
+    ax.set_title(title, fontsize=26, fontname='Times New Roman')
     # 定义平均值文件的路径
     # 这里假设文件在同目录下，文件名是 {tif_name}.txt，里面只包含一个数字
     # 如果你的数据在一个总的 Excel/CSV 里，你需要用 pd.read_csv 读取并筛选
@@ -203,13 +203,14 @@ def map(tif_file, tif_name,crop, vmin, vmax, title, colorbar_name, save_file,out
         # 在地图上添加文本
         # x=0.02, y=0.08 是相对坐标 (0-1)，位置大概在左下角（避开南极洲）
         ax.text(
-            0.02, 0.25,
+            0.5, 0.25,
             text_str,
             transform=ax.transAxes,  # 使用轴坐标系
-            fontsize=10,
+            fontsize=22,
             fontname='Times New Roman',
             fontweight='bold',  # 加粗
             color='black',
+            ha='center',
             bbox=dict(facecolor='white', alpha=0.7, edgecolor='none', pad=2)  # 添加半透明白色背景，防止看不清
         )
     # 8. 保存或显示地图
@@ -327,7 +328,7 @@ def notitle_map(tif_file, tif_name,crop, vmin, vmax, colorbar_name, save_file,ou
         direction='out',    # 刻度线向外
         length=1.7,         # 刻度线的长度
         width=0.8,          # 刻度线的宽度
-        labelsize=12,        # 刻度字体大小
+        labelsize=16,        # 刻度字体大小
         labeltop=True,      # 显示刻度标签在顶部
         labelbottom=False,  # 隐藏底部的刻度标签
         top=True,           # 在颜色条顶部显示刻度
@@ -355,7 +356,7 @@ def notitle_map(tif_file, tif_name,crop, vmin, vmax, colorbar_name, save_file,ou
     cbar.ax.text(
         0, 2,  # 设置相对位置
         f'{colorbar_name}', 
-        fontsize=15,
+        fontsize=19,
         transform=cbar.ax.transAxes,  # 使用颜色条的相对坐标
         va='bottom',                 # 垂直对齐方式
         ha='left',                   # 水平对齐方式
@@ -752,9 +753,9 @@ def comparison_map_3x1(data_optimal, data_ck, data_change, indicator, output_dir
         'Y': ('Yield', 'kg/ha'),
         'ET': ('Evapotranspiration', 'mm'),
         'WUE': ('Water Use Efficiency', 'kg/m³'),
-        'CH4': ('CH4 Emission', 'kg/ha'),
-        'N2O': ('N2O Emission', 'kg/ha'),
-        'GWP': ('Global Warming Potential', 'kg CO2-eq/ha')
+        'CH4': ('CH₄ Emission', 'kg/ha'),
+        'N2O': ('N₂O Emission', 'kg/ha'),
+        'GWP': ('Global Warming Potential', r'kg CO$_2$-eq/ha')
     }
     title_name, colorbar_name = indicator_names.get(indicator, (indicator, indicator))
 
@@ -821,9 +822,9 @@ def comparison_map_3x1(data_optimal, data_ck, data_change, indicator, output_dir
 
     # 绘图数据配置
     plot_data = [
-        (data_optimal, vmin, vmax, 'RdYlGn', f'{indicator} - Optimal'),
-        (data_ck, vmin, vmax, 'RdYlGn', f'{indicator} - Control'),
-        (data_change, vmin_change, vmax_change, 'RdBu_r', f'{indicator} - Change')
+        (data_optimal, vmin, vmax, 'RdYlGn', title_name),
+        (data_ck, vmin, vmax, 'RdYlGn', title_name),
+        (data_change, vmin_change, vmax_change, 'RdBu_r', title_name)
     ]
 
     # 使用scatter绘制点数据（适合离散点，避免插值问题）
@@ -848,7 +849,7 @@ def comparison_map_3x1(data_optimal, data_ck, data_change, indicator, output_dir
         for spine in ax.spines.values():
             spine.set_linewidth(1.5)
 
-        ax.set_title(sub_title, fontsize=18, fontname='Times New Roman')
+        ax.set_title(sub_title, fontsize=26, fontname='Times New Roman')
 
     # 调整布局
     plt.tight_layout()
@@ -867,7 +868,7 @@ def comparison_map_3x1(data_optimal, data_ck, data_change, indicator, output_dir
 
         # 与 map 函数一致的颜色条设置
         cbar.ax.tick_params(
-            direction='out', length=1.7, width=0.8, labelsize=12,
+            direction='out', length=1.7, width=0.8, labelsize=16,
             labeltop=True, labelbottom=False, top=True, bottom=False
         )
 
@@ -883,7 +884,7 @@ def comparison_map_3x1(data_optimal, data_ck, data_change, indicator, output_dir
             label.set_fontname('Times New Roman')
 
         # 颜色条标题
-        cbar.ax.text(0, 2.5, colorbar_name, fontsize=15,
+        cbar.ax.text(0, 2.5, colorbar_name, fontsize=19,
                      transform=cbar.ax.transAxes, va='bottom', ha='left',
                      fontname='Times New Roman')
 

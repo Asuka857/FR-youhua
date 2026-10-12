@@ -20,11 +20,11 @@ import geopandas as gpd
 from cartopy import crs as ccrs
 
 INDICATOR_TITLE_NAMES = {
-    'Y': 'Y',
+    'Y': 'Yield',
     'ET': 'ET',
     'WUE': 'WUE',
-    'CH4': 'CH4',
-    'N2O': 'N2O',
+    'CH4': 'CH₄',
+    'N2O': 'N₂O',
     'GWP': 'GWP'
 }
 
@@ -34,7 +34,7 @@ INDICATOR_COLORBAR_NAMES = {
     'WUE': 'kg/m3',
     'CH4': 'kg/ha',
     'N2O': 'kg/ha',
-    'GWP': 'kg CO2-eq/ha'
+    'GWP': r'kg CO$_2$-eq/ha'
 }
 
 
@@ -113,10 +113,17 @@ def csv_to_tif_advanced(data_df, value_col, output_tif_path, reference_tif_path)
 # 单张地图绘制函数（仿照 picture.map 风格，颜色条在内部，无Global Mean）
 # =============================================================================
 
+def format_global_mean_text(global_avg_val, as_percentage=False):
+    if as_percentage:
+        return f'Global Mean: {(global_avg_val - 1.0) * 100:+.1f}%'
+    return f'Global Mean: {global_avg_val:.2f}'
+
+
 def draw_single_map_from_tif(tif_path, title, colorbar_name, output_path,
                               vmin=None, vmax=None, cmap='RdYlGn',
                               shapefile_path="E:/USERS/Global/country.shp",
-                              show_global_mean=True):
+                              show_global_mean=True,
+                              global_mean_as_percentage=False):
     """
     从TIF文件绑制单张地图
     完全仿照 picture.map 函数风格，颜色条放在地图内部，显示Global Mean
@@ -130,6 +137,7 @@ def draw_single_map_from_tif(tif_path, title, colorbar_name, output_path,
         cmap: 颜色映射
         shapefile_path: 底图文件路径
         show_global_mean: 是否显示全球平均值（默认True）
+        global_mean_as_percentage: 是否将Global Mean显示为相对1.0的百分比变化
     """
     # 1. 读取栅格数据
     with rasterio.open(tif_path) as src:
@@ -206,7 +214,7 @@ def draw_single_map_from_tif(tif_path, title, colorbar_name, output_path,
         direction='out',
         length=1.7,
         width=0.8,
-        labelsize=12,
+        labelsize=16,
         labeltop=True,
         labelbottom=False,
         top=True,
@@ -234,7 +242,7 @@ def draw_single_map_from_tif(tif_path, title, colorbar_name, output_path,
     cbar.ax.text(
         0, 3,
         f'{colorbar_name}',
-        fontsize=15,
+        fontsize=19,
         transform=cbar.ax.transAxes,
         va='bottom',
         ha='left',
@@ -246,7 +254,7 @@ def draw_single_map_from_tif(tif_path, title, colorbar_name, output_path,
         spine.set_linewidth(1.5)
 
     # 添加标题
-    ax.set_title(title, fontsize=18, fontname='Times New Roman')
+    ax.set_title(title, fontsize=26, fontname='Times New Roman')
 
     # 不显示 Global Mean（与 map 函数不同）
 
@@ -256,17 +264,18 @@ def draw_single_map_from_tif(tif_path, title, colorbar_name, output_path,
         global_avg_val = np.nanmean(data)
 
         # 设置显示文本格式
-        text_str = f'Global Mean: {global_avg_val:.2f}'
+        text_str = format_global_mean_text(global_avg_val, global_mean_as_percentage)
 
         # 在地图上添加文本（位置在左下角）
         ax.text(
-            0.02, 0.25,  # 相对坐标（避开南极洲）
+            0.5, 0.25,  # 相对坐标，水平居中
             text_str,
             transform=ax.transAxes,  # 使用轴坐标系
-            fontsize=10,
+            fontsize=22,
             fontname='Times New Roman',
             fontweight='bold',  # 加粗
             color='black',
+            ha='center',
             bbox=dict(facecolor='white', alpha=0.7, edgecolor='none', pad=2)  # 半透明白色背景
         )
 
@@ -309,7 +318,7 @@ def draw_comparison_maps_from_tif(
         'WUE': ('WUE', 'kg/m³'),
         'CH4': ('CH₄', 'kg/ha'),
         'N2O': ('N₂O', 'kg/ha'),
-        'GWP': ('GWP', 'kg CO2-eq/ha')
+        'GWP': ('GWP', r'kg CO$_2$-eq/ha')
     }
     title_name = INDICATOR_TITLE_NAMES.get(indicator, indicator)
     colorbar_name = INDICATOR_COLORBAR_NAMES.get(indicator, indicator)
@@ -406,7 +415,7 @@ def draw_comparison_maps_from_tif(
     # 最优情景图
     map_optimal = draw_single_map_from_tif(
         tif_optimal,
-        title=f'{title_name} - Optimal',
+        title=title_name,
         colorbar_name=colorbar_name,
         output_path=str(maps_dir / f'{indicator}_optimal.png'),
         vmin=vmin, vmax=vmax, cmap='RdYlGn',
@@ -416,7 +425,7 @@ def draw_comparison_maps_from_tif(
     # 对照组图
     map_ck = draw_single_map_from_tif(
         tif_ck,
-        title=f'{title_name} - Control',
+        title=title_name,
         colorbar_name=colorbar_name,
         output_path=str(maps_dir / f'{indicator}_ck.png'),
         vmin=vmin, vmax=vmax, cmap='RdYlGn',
@@ -426,7 +435,7 @@ def draw_comparison_maps_from_tif(
     # 变化图
     map_change = draw_single_map_from_tif(
         tif_change,
-        title=f'{title_name} - Change',
+        title=title_name,
         colorbar_name=colorbar_name,
         output_path=str(maps_dir / f'{indicator}_change.png'),
         vmin=vmin_change, vmax=vmax_change, cmap='RdBu_r',
@@ -440,7 +449,8 @@ def draw_comparison_maps_from_tif(
         colorbar_name='Ratio',
         output_path=str(maps_dir / f'{indicator}_ratio.png'),
         vmin=vmin_ratio, vmax=vmax_ratio, cmap='RdYlGn',
-        shapefile_path=shapefile_path
+        shapefile_path=shapefile_path,
+        global_mean_as_percentage=True
     )
 
     # Step 3: 生成拼图（3x1纵向）
